@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Citizenship Loss Tool – UK</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 2em; max-width: 800px; margin: auto; }
+    .question { margin-bottom: 1.5em; }
+    button { margin: 0.5em 0.5em 0.5em 0; padding: 0.6em 1.2em; }
+    #result { font-weight: bold; margin-top: 2em; color: darkblue; }
+  </style>
+</head>
+<body>
+  <h1>Australian Citizenship Loss Assessment – UK Acquisition</h1>
+  <div id="questionContainer" class="question"></div>
+  <div id="result"></div>
+
+  <script>
+    const steps = {
+      start: {
+        question: "Did the Australian Citizen Parent (ACP) acquire UK citizenship?",
+        options: [
+          { label: "Yes", next: "acquiredDate" },
+          { label: "No", next: "noLoss" }
+        ]
+      },
+      acquiredDate: {
+        question: "When did the ACP acquire UK citizenship?",
+        options: [
+          { label: "Before 4 April 2002", next: "acquisitionMethodPre2002" },
+          { label: "On or After 4 April 2002", next: "post2002" }
+        ]
+      },
+      acquisitionMethodPre2002: {
+        question: "How did the ACP acquire UK citizenship before 2002?",
+        options: [
+          { label: "By descent through father (ACP born before 1 Jan 1983)", next: "checkMarriageStatus" },
+          { label: "By descent through mother (ACP born before 1 Jan 1983)", next: "maternalCheck" },
+          { label: "By naturalisation or registration", next: "likelyLoss" }
+        ]
+      },
+      checkMarriageStatus: {
+        question: "Were the ACP’s parents married at the time of birth?\n(Under the British Nationality Act 1948, s.5(1), UK citizenship could only be transmitted through the father if the parents were married at the time of the child's birth.)",
+        options: [
+          { label: "Yes", next: "noLoss" },
+          { label: "No", next: "furtherInvestigation" }
+        ]
+      },
+      maternalCheck: {
+        question: "Was the ACP born before 1 Jan 1983 and claiming descent through the mother?\n(Prior to 1 Jan 1983, the British Nationality Act 1948 did not generally allow UK citizenship transmission through the mother unless registered under section 9 of the British Nationality Act 1981 post-1983.)",
+        options: [
+          { label: "Yes", next: "furtherInvestigation" },
+          { label: "No, born on or after 1 Jan 1983", next: "checkMarriageStatus" }
+        ]
+      },
+      post2002: {
+        question: "How was UK citizenship acquired?\n(From 4 April 2002, section 17 of the Australian Citizenship Act 1948 ceased to apply, meaning Australian citizenship was no longer automatically lost upon acquiring another citizenship.)",
+        options: [
+          { label: "By descent (parent born in UK)", next: "noLoss" },
+          { label: "By registration/naturalisation", next: "noLoss" }
+        ]
+      },
+      // End results
+      noLoss: "Result: There is no concern that Australian citizenship has been lost. (No action required.)",
+      likelyLoss: "Result: It is likely Australian citizenship was lost under section 17 of the Australian Citizenship Act 1948 (repealed 4 April 2002). Further investigation required.",
+      furtherInvestigation: "Result: Complex scenario – please escalate for further review.\n(This includes descent via mother before 1983, non-married parents, or unclear eligibility. Refer to British Nationality Act 1948 and 1981 for specifics.)"
+    };
+
+    let currentStep = "start";
+    const container = document.getElementById("questionContainer");
+    const resultDiv = document.getElementById("result");
+
+    function renderStep(stepId) {
+      const step = steps[stepId];
+      container.innerHTML = "";
+      resultDiv.textContent = "";
+
+      if (typeof step === "string") {
+        resultDiv.textContent = step;
+        return;
+      }
+
+      const question = document.createElement("div");
+      question.textContent = step.question;
+      container.appendChild(question);
+
+      step.options.forEach(option => {
+        const btn = document.createElement("button");
+        btn.textContent = option.label;
+        btn.onclick = () => renderStep(option.next);
+        container.appendChild(btn);
+      });
+    }
+
+    renderStep(currentStep);
+  </script>
+</body>
+</html>
