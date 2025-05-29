@@ -9,12 +9,14 @@
     .question { margin-bottom: 1.5em; }
     button { margin: 0.5em 0.5em 0.5em 0; padding: 0.6em 1.2em; }
     #result { font-weight: bold; margin-top: 2em; color: darkblue; }
+    #homeButtonContainer { margin-top: 2em; }
   </style>
 </head>
 <body>
   <h1>Australian Citizenship Loss Assessment – UK Acquisition</h1>
   <div id="questionContainer" class="question"></div>
   <div id="result"></div>
+  <div id="homeButtonContainer"></div>
 
   <script>
     const steps = {
@@ -61,7 +63,6 @@
           { label: "By registration/naturalisation", next: "noLoss" }
         ]
       },
-      // End results
       noLoss: "Result: There is no concern that Australian citizenship has been lost. (No action required.)",
       likelyLoss: "Result: It is likely Australian citizenship was lost under section 17 of the Australian Citizenship Act 1948 (repealed 4 April 2002). Further investigation required.",
       furtherInvestigation: "Result: Complex scenario – please escalate for further review.\n(This includes descent via mother before 1983, non-married parents, or unclear eligibility. Refer to British Nationality Act 1948 and 1981 for specifics.)"
@@ -70,14 +71,20 @@
     let currentStep = "start";
     const container = document.getElementById("questionContainer");
     const resultDiv = document.getElementById("result");
+    const homeButtonContainer = document.getElementById("homeButtonContainer");
 
     function renderStep(stepId) {
       const step = steps[stepId];
       container.innerHTML = "";
       resultDiv.textContent = "";
+      homeButtonContainer.innerHTML = "";
 
       if (typeof step === "string") {
         resultDiv.textContent = step;
+        const homeBtn = document.createElement("button");
+        homeBtn.textContent = "Start Over";
+        homeBtn.onclick = () => renderStep("start");
+        homeButtonContainer.appendChild(homeBtn);
         return;
       }
 
